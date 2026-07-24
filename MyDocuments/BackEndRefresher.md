@@ -14,6 +14,10 @@
 | Query files | Contain reusable SQL operations |
 | Authentication middleware | Verifies tokens and identifies the logged-in user |
 
+schema.sql defines the tables and relationships.
+seed.js inserts the starter records.
+client.js connects the JavaScript application to PostgreSQL.
+
 ## Database Relationships
 
 ### Users → Orders: One-to-Many
