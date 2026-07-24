@@ -1,4 +1,17 @@
--- TODO
+-- TODO/DONE!
+-- users
+--   ↓ one-to-many
+-- orders
+--   ↓
+-- orders_products
+--   ↑
+-- products
+
+DROP TABLE IF EXISTS orders_products;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
@@ -32,3 +45,15 @@ CREATE TABLE orders_products (
   quantity INTEGER NOT NULL,
   PRIMARY KEY (order_id, product_id)
 );
+
+-- Additional Notes:
+-- DROP TABLES in this order because PostgreSQL protects active references.
+-- in other words, I cannot remove users because the orders table still depends on it.
+-- 1. Remove orders_products
+--    It depends on orders and products.
+
+-- 2. Remove orders
+--    It depends on users.
+
+-- 3. Remove products and users
+--    Nothing points to them anymore.
