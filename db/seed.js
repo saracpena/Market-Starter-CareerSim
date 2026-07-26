@@ -84,34 +84,35 @@ const productData = [
 
 // We retain createdProducts so we have the database-generated product IDs needed
 // to connect those products to the seeded order through orders_products.
-const createdProducts = [];
+// 3. Insert and retain the created products
+  const createdProducts = [];
 
-for (const product of productData) {
+  for (const product of productData) {
+    const {
+      rows: [createdProduct],
+    } = await db.query(
+      `
+        INSERT INTO products (title, description, price)
+        VALUES ($1, $2, $3)
+        RETURNING *;
+      `,
+      [product.title, product.description, product.price],
+    );
+
+    createdProducts.push(createdProduct);
+  }
+
+ // 4. Create and retain one order belonging to the user
   const {
-    rows: [createdProduct],
+    rows: [order],
   } = await db.query(
     `
-      INSERT INTO products (title, description, price)
+      INSERT INTO orders (date, note, user_id)
       VALUES ($1, $2, $3)
       RETURNING *;
     `,
-    [product.title, product.description, product.price],
+    ["2026-07-26", "Home gym essentials", user.id],
   );
-
-  createdProducts.push(createdProduct);
-}
-
-//This order belongs to that user.
-const {
-  rows: [order],
-} = await db.query(
-  `
-    INSERT INTO orders (date, note, user_id)
-    VALUES ($1, $2, $3)
-    RETURNING *;
-  `,
-  ["2026-07-24", "Home gym essentials", user.id],
-);
 
 //User who has made at least 1 order of at least 5 distinct products.
 const {
