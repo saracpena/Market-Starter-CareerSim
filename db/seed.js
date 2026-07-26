@@ -24,6 +24,7 @@ async function seed() {
 
   console.log("Created user:", user.username);
 
+// 2. Define the ten products
 const productData = [
   {
     title: "Resistance Bands",
