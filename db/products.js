@@ -12,3 +12,18 @@ export async function getProducts() {
 
   return rows;
 }
+
+/** Returns one product matching the provided ID. */
+export async function getProduct(id) {
+  const sql = `
+    SELECT *
+    FROM products
+    WHERE id = $1;
+  `;
+
+  const {
+    rows: [product],
+  } = await db.query(sql, [id]);
+
+  return product;
+}
