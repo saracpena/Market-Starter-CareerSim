@@ -8,7 +8,7 @@ await db.end(); //closes the connection after seeding finishes.
 console.log("🌱 Database seeded.");
 
 async function seed() {
-  // TODO
+  // 1. Create and retain the user
   const hashedPassword = await bcrypt.hash("SageyWagey", 10);
 
   const {
@@ -16,14 +16,13 @@ async function seed() {
   } = await db.query(
     `
       INSERT INTO users (username, password)
-      VALUES ($1, $2) 
+      VALUES ($1, $2)
       RETURNING *;
     `,
     ["sara", hashedPassword],
   );
 
   console.log("Created user:", user.username);
-}
 
 const productData = [
   {
@@ -113,6 +112,50 @@ const {
   ["2026-07-24", "Home gym essentials", user.id],
 );
 
+//User who has made at least 1 order of at least 5 distinct products.
+const {
+  rows: [order],
+} = await db.query(
+  `
+    INSERT INTO orders (date, note, user_id)
+    VALUES ($1, $2, $3)
+    RETURNING *;
+  `,
+  ["2026-07-26", "Home gym essentials", user.id],
+);
+
+const orderProductData = [
+  {
+    productId: createdProducts[0].id,
+    quantity: 2,
+  },
+  {
+    productId: createdProducts[1].id,
+    quantity: 1,
+  },
+  {
+    productId: createdProducts[2].id,
+    quantity: 1,
+  },
+  {
+    productId: createdProducts[3].id,
+    quantity: 2,
+  },
+  {
+    productId: createdProducts[4].id,
+    quantity: 1,
+  },
+];
+
+for (const orderProduct of orderProductData) {
+  await db.query(
+    `
+      INSERT INTO orders_products (order_id, product_id, quantity)
+      VALUES ($1, $2, $3);
+    `,
+    [order.id, orderProduct.productId, orderProduct.quantity],
+  );
+}
 
 
 // !Reminder:
