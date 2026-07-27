@@ -144,3 +144,18 @@ orders.id   → orders_products.order_id
 
 products.id → orders_products.product_id
 ```
+
+### `getUserById()` Flow
+
+`getUserFromToken.js` imports `getUserById()`.
+
+```text
+Receive an ID
+    ↓
+Place the ID into SQL parameter $1
+    ↓
+Search users.id
+    ↓
+Extract the first returned row
+    ↓
+Return the user or undefined
