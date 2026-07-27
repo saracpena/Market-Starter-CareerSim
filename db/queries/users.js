@@ -42,3 +42,22 @@ export async function createUser(username, password) {
 
   return user;
 }
+
+/**
+ * Finds a user by username.
+ * Called by POST /users/login.
+ * Returns the matching user, or undefined if no user exists.
+ */
+export async function getUserByUsername(username) {
+  const sql = `
+    SELECT *
+    FROM users
+    WHERE username = $1;
+  `;
+
+  const {
+    rows: [user],
+  } = await db.query(sql, [username]);
+
+  return user;
+}
