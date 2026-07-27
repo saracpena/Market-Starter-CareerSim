@@ -1,6 +1,6 @@
 import express from "express";
-import { getProduct, getProducts } from "#db/queries/products";
-
+import { getProduct, getProducts, getProductOrders } from "#db/queries/products";
+import requireUser from "#middleware/requireUser";
 
 const router = express.Router();
 
@@ -27,6 +27,25 @@ router.get("/:id", async (req, res, next) => {
     }
 
     res.send(product);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * Sends the logged-in user's orders that contain the specified product.
+ */
+router.get("/:id/orders", requireUser, async (req, res, next) => {
+  try {
+    const product = await getProduct(req.params.id);
+
+    if (!product) {
+      return res.status(404).send("Product not found.");
+    }
+
+    const orders = await getProductOrders(product.id, req.user.id);
+
+    res.send(orders);
   } catch (error) {
     next(error);
   }
